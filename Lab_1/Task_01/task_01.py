@@ -1,6 +1,6 @@
 import math
 
-x = int(input("Введіть ціле число: \n"))
+x = int(input("Введіть ціле число: "))
 if x > 45: 
     z = -math.sqrt(x)
 elif x <= 45:
