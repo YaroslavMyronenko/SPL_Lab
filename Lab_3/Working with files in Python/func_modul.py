@@ -2,14 +2,21 @@ import os
 import csv
  
 def new_file(): # 1)Створення нового файлу
-    """Функція для створення нового файлу .txt в заданій директорії files/"""  
+    """Функція для створення нового файлу .csv та директорії files/ якщо потрібно"""  
+    
+    # Перевіряємо чи існує папка files, якщо ні — створюємо її
+    folder_name = 'files'
+    if not os.path.exists(folder_name): # перевірка наявності директорії files
+        os.makedirs(folder_name) # створення директорії files
     
     name_file = input('Введіть назву файлу: ') 
-    with open(f'files/{name_file}.csv', 'w+', encoding='utf-8', newline='') as csvfile: # створення файлу
+    file_path = os.path.join(folder_name, f'{name_file}.csv') # шлях до файлу
+    
+    with open(file_path, 'w+', encoding='utf-8', newline='') as csvfile: # створення файлу
         name_columns = ['   Прізвище Ім\'я', ' Група', ' Середній бал'] # назви колонок
         writer = csv.DictWriter(csvfile, fieldnames=name_columns) # запис колонок у файл
         writer.writeheader() # запис заголовка
-        print(f'Файл {name_file} створено') 
+        print(f'Файл {name_file}.csv створено') 
         
 def derectory_reader(): # 2)Вибір файлу для роботи
     """Функція читає директорію files/ та дає можливість обрати файл для читання
