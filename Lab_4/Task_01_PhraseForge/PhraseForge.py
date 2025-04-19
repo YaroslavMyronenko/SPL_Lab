@@ -42,4 +42,3 @@ while True: # Цикл для генерації нових фраз
         break
     else:
         continue
-    
