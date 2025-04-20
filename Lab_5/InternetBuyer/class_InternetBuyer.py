@@ -23,7 +23,6 @@ class InternetBuyer:
         :param item: Товар, який потрібно додати до історії покупок
         """
         self.bay_history.append(item) # Історія покупок
-        print(f"Товар {item} додано до історії покупок")
     
     def add_to_shop_cart(self, item): # Метод для кошику покупців
         """
@@ -40,7 +39,8 @@ class InternetBuyer:
         """
         if delivery in self.delivery_methods: # Якщо спосіб доставки є в списку доступних способів доставки
             self.delivery = delivery
-        print(f"Спосіб доставки {self.delivery} обрано")
+        else:
+            print("Неправильний спосіб доставки!")
         
     def set_delivery_address(self, address):
         """
@@ -55,7 +55,7 @@ class InternetBuyer:
         Виводить інформацію про покупця
         :return: Інформація про покупця
         """
-        return f"Ім'я: {self.name} \nНомер телефону: {self.phone} \nДата народження: {self.birth_date}  \nСтать: {self.sex} \nЕлектронна пошта: {self.email} \nІсторія покупок: {self.bay_history} \nКошик покупця: {self.shop_cart} \nСпосіб доставки: {self.delivery} \nАдреса доставки: {self.delivery_address}"
+        return f"\nІм'я: {self.name} \nНомер телефону: {self.phone} \nДата народження: {self.birth_date}  \nСтать: {self.sex} \nЕлектронна пошта: {self.email} \nІсторія покупок: {self.bay_history} \nКошик покупця: {self.shop_cart} \nСпосіб доставки: {self.delivery} \nАдреса доставки: {self.delivery_address}"
         
     
     
