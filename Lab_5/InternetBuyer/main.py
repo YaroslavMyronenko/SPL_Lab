@@ -14,8 +14,10 @@ def main():
     # Додамо товар до кошика
     while True:    
         item = input("\nВведіть товар, який хочете додати до кошика: ")
-        if not item:
+        print("Для завершення введіть залиште поле порожнім")
+        if item == "":
             break
+            
         buer.add_to_shop_cart(item) # Додамо товар до кошика
         buer.add_to_bay_history(item)  # Додамо товар до історії покупок
 
