@@ -2,7 +2,7 @@ from class_Vehicle import Vehicle
 
 # Приклад роботи з класом Vehicle
 class Airplane(Vehicle): # Клас Літак, що наслідує клас Транспортний засіб
-    def __init__ (self, price, speed, year_release, height, passengers): 
+    def __init__ (self, name, price, speed, year_release, height, passengers): 
         """
         Ініціалізація атрибутів класу
         :param price: Вартість
@@ -10,17 +10,23 @@ class Airplane(Vehicle): # Клас Літак, що наслідує клас �
         :param year_release: Рік випуску
         :param height: Висота
         """
-        super().__init__(price, speed, year_release, passengers=passengers, height=height) # Ініціалізація атрибутів класу
+        super().__init__(name, price, speed, year_release, passengers=passengers, height=height) # Ініціалізація атрибутів класу
         
     def __str__(self): # Метод для виводу інформації про літак
         """
         Виводить інформацію про літак
         :return: Інформація про літак
         """
-        return f"Літак:\n {super().__str__()}"
+        return (f"\n{self.name}:\n"
+                f"Вартість: {self.price} $\n"
+                f"Швидкість: {self.speed} km/h\n"
+                f"Рік випуску: {self.year_release} р.\n"
+                f"Координати: {self.coordinates}\n"
+                f"Кількість пасажирів: {self.passengers} чоловік\n"
+                f"Висота: {self.height}м")
     
 class Car(Vehicle):
-    def __init__ (self, price, speed, year_release, passengers): # Клас Автомобіль, що наслідує клас Транспортний засіб
+    def __init__ (self, name, price, speed, year_release): # Клас Автомобіль, що наслідує клас Транспортний засіб
         """
         Ініціалізація атрибутів класу
         :param price: Вартість
@@ -28,17 +34,21 @@ class Car(Vehicle):
         :param year_release: Рік випуску
         :param passengers: Кількість пасажирів
         """
-        super().__init__(price, speed, year_release, passengers=passengers)
+        super().__init__(name, price, speed, year_release)
     
     def __str__(self): # Метод для виводу інформації про автомобіль
         """
         Виводить інформацію про автомобіль
         :return: Інформація про автомобіль
         """
-        return f"Автомобіль:\n {super().__str__()}"
+        return (f"\n{self.name}:\n"
+                f"Вартість: {self.price} $\n"
+                f"Швидкість: {self.speed} km/h\n"
+                f"Рік випуску: {self.year_release} р.\n"
+                f"Координати: {self.coordinates}\n")
     
 class Ship(Vehicle):
-    def __init__ (self, price, speed, year_release, passengers, port): # Клас Корабель, що наслідує клас Транспортний засіб
+    def __init__ (self, name, price, speed, year_release, passengers, port): # Клас Корабель, що наслідує клас Транспортний засіб
         """
         Ініціалізація атрибутів класу
         :param price: Вартість
@@ -47,14 +57,44 @@ class Ship(Vehicle):
         :param passengers: Кількість пасажирів
         :param port: Порт приписки
         """
-        super().__init__(price, speed, year_release, passengers=passengers, port=port)
+        super().__init__(name, price, speed, year_release, passengers=passengers, port=port)
     
     def __str__(self): # Метод для виводу інформації про корабель
         """
         Виводить інформацію про корабель
         :return: Інформація про корабель
         """
-        return f"Корабель:\n {super().__str__()}"
+        return (f"\n{self.name}:\n"
+                f"Вартість: {self.price} $\n"
+                f"Швидкість: {self.speed} km/h\n"
+                f"Рік випуску: {self.year_release} р.\n"
+                f"Координати: {self.coordinates}\n"
+                f"Кількість пасажирів: {self.passengers} чоловік\n"
+                f"Порт приписки: {self.port}")
+
+def input_positive_int(number):
+    while True:
+        value = input(number)
+        if value.isdigit() and int(value) > 0:
+            return int(value)
+        print("Введіть додатнє число!")
+
+def input_positive_float(number):
+    while True:
+        try:
+            value = float(input(number))
+            if value > 0:
+                return value
+            print("Введіть додатнє число!")
+        except ValueError:
+            print("Введіть коректне число!")
+            
+def input_year(date):
+    while True:
+        value = input(date)
+        if value.isdigit() and 1900 <= int(value) <= 2025:
+            return int(value)
+        print("Введіть коректний рік!") 
 
 def main():
     menu = {
@@ -76,37 +116,39 @@ def main():
             break
         
         elif choice == 1:
-            price = float(input("Введіть вартість: "))
-            speed = float(input("Введіть швидкість: "))
-            year_release = int(input("Введіть рік випуску: "))
-            height = float(input("Введіть висоту літака: "))
-            passengers = int(input("Введіть кількість пасажирів: "))
-            airplane = Airplane(price, speed, year_release, height, passengers)
-            x = float(input("Введіть координату X: "))
-            y = float(input("Введіть координату Y: "))
+            name = input("Введіть модель транспортного засобу: ")
+            price = input_positive_float("Введіть вартість: ")
+            speed = input_positive_float("Введіть швидкість: ")
+            year_release = input_year("Введіть рік випуску: ")
+            height = input_positive_float("Введіть висоту літака: ")
+            passengers = input_positive_int("Введіть кількість пасажирів: ")
+            airplane = Airplane(name, price, speed, year_release, height, passengers)
+            x = input_positive_float("Введіть координату X: ")
+            y = input_positive_float("Введіть координату Y: ")
             airplane.set_coordinates(x, y)
             print("\nДанні про літак: ", airplane)
             
         elif choice == 2:
-            price = float(input("Введіть вартість: "))
-            speed = float(input("Введіть швидкість: "))
-            year_release = int(input("Введіть рік випуску: "))
-            passengers = int(input("Введіть кількість пасажирів: "))
-            car = Car(price, speed, year_release, passengers)
-            x = float(input("Введіть координату X: "))
-            y = float(input("Введіть координату Y: "))
+            name = input("Введіть модель транспортного засобу: ")
+            price = input_positive_float("Введіть вартість: ")
+            speed = input_positive_float("Введіть швидкість: ")
+            year_release = input_year("Введіть рік випуску: ")
+            car = Car(name, price, speed, year_release)
+            x = input_positive_float("Введіть координату X: ")
+            y = input_positive_float("Введіть координату Y: ")
             car.set_coordinates(x, y)
             print("\nДанні про автомобіль: ", car)
             
         elif choice == 3:
-            price = float(input("Введіть вартість: "))
-            speed = float(input("Введіть швидкість: "))
-            year_release = int(input("Введіть рік випуску: "))
-            passengers = int(input("Введіть кількість пасажирів: "))
+            name = input("Введіть модель транспортного засобу: ")
+            price = input_positive_float("Введіть вартість: ")
+            speed = input_positive_float("Введіть швидкість: ")
+            year_release = input_year("Введіть рік випуску: ")
+            passengers = input_positive_int("Введіть кількість пасажирів: ")
             port = input("Введіть порт приписки: ")
-            ship = Ship(price, speed, year_release, passengers, port)
-            x = float(input("Введіть координату X: "))
-            y = float(input("Введіть координату Y: "))
+            ship = Ship(name, price, speed, year_release, passengers, port)
+            x = input_positive_float("Введіть координату X: ")
+            y = input_positive_float("Введіть координату Y: ")
             ship.set_coordinates(x, y)
             print("\nДанні про корабель: ", ship)
         else:
@@ -114,9 +156,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-            
-    
-    
-    
-    
-    
