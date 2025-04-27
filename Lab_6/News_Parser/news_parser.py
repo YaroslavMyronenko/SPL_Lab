@@ -7,6 +7,8 @@ def get_html_url(url):
     """Отримує URL сторінки та повертає HTML-код для подальшого парсингу"""
     try:
         link = req.get(url)
+        if link.encoding != 'utf-8':
+            link.encoding = link.apparent_encoding # Встановлення кодування    
         if link.status_code == 200:
             return link.text
         else:
@@ -23,12 +25,12 @@ def parse_html(html):
     
     soup = bs(html, 'lxml')
     
-    text = soup.get_text(strip=True)  # Отримання тексту з HTML-коду
-     
-    symbols = "!@#$%^&*()_+-`~[]{};:|↑—=|\'\",.·<>?/"
+    text = soup.get_text(separator=' ')  # Отримання тексту з HTML-коду
+    
+    symbols = "1234567890!@#$%№^&–*()•_©+-«`~[]{};:|↑—=|\'\",.·<>?/"
     for s in symbols: # Очищення тексту від непотрібних символів та знаків пунктуації
-        text = text.replace(s, ' ')  
-        
+        text = text.replace(s, ' ')
+            
     words = text.split() # Розділення тексту на слова
     word_count = {} # Словник для підрахунку частоти слів
     for word in words: # Підрахунок частоти слів
@@ -55,10 +57,15 @@ def parse_html(html):
 def save_to_db(word_count, tag_count, links, images): 
     conn = sql.connect('data_news_parser.db') # Підключення до бази даних
     cursor = conn.cursor() # Створення курсора для виконання SQL-запитів
-    
+
     cursor.execute('''CREATE TABLE IF NOT EXISTS word_count (word TEXT PRIMARY KEY, count INTEGER)''') # Створення таблиці для частоти слів
     cursor.execute('''CREATE TABLE IF NOT EXISTS tag_count (tag TEXT PRIMARY KEY, count INTEGER)''') # Створення таблиці для частоти HTML-тегів
     cursor.execute('''CREATE TABLE IF NOT EXISTS links_images (links INTEGER, images INTEGER)''') # Створення таблиці для кількості посилань та зображень
+    
+    # Очищення таблиць перед новим записом
+    cursor.execute('DELETE FROM word_count')
+    cursor.execute('DELETE FROM tag_count')
+    cursor.execute('DELETE FROM links_images')
     
     for word, count in word_count.items(): # Збереження частоти слів
         cursor.execute('INSERT OR REPLACE INTO word_count (word, count) VALUES (?, ?)', (word, count))
@@ -72,17 +79,28 @@ def save_to_db(word_count, tag_count, links, images):
     conn.close() # Закриття з'єднання з базою даних
 
 # Функція для відображення результатів парсингу    
-def display_results(word_count, tag_count, links, images):
+def display_results():
+    conn = sql.connect('data_news_parser.db') # Підключення до бази даних
+    cursor = conn.cursor() # Створення курсора для виконання SQL-запитів
+    
     print("Частота слів:")
-    for word, count in word_count.items(): # Виведення частоти слів
+    for word, count in cursor.execute('SELECT word, count FROM word_count ORDER BY count DESC'): # Виведення частоти слів
         print(f"{word}: {count}")
     
     print("\nЧастота HTML-тегів:")
-    for tag, count in tag_count.items(): # Виведення частоти HTML-тегів
+    for tag, count in cursor.execute('SELECT tag, count FROM tag_count ORDER BY count DESC'): # Виведення частоти HTML-тегів
         print(f"{tag}: {count}")
     
-    print(f"\nКількість посилань: {links}") # Виведення кількості посилань
-    print(f"Кількість зображень: {images}") # Виведення кількості зображень
+    cursor.execute('SELECT links, images FROM links_images')
+    row = cursor.fetchone() # Отримання кількості посилань та зображень
+    if row:
+        print(f"\nКількість посилань: {row[0]}") # Виведення кількості посилань
+        print(f"Кількість зображень: {row[1]}") # Виведення кількості зображень
+    else:
+        print("\nКількість посилань: 0")
+        print("Кількість зображень: 0")
+        
+    conn.close() # Закриття з'єднання з базою даних 
 
 def main():
     while True:
@@ -95,7 +113,7 @@ def main():
     
     word_count, tag_count, links, images = parse_html(html) # Парсинг HTML-коду
     save_to_db(word_count, tag_count, links, images) # Збереження результатів у базі даних
-    display_results(word_count, tag_count, links, images) # Відображення результатів парсингу
+    display_results() # Відображення результатів парсингу
         
 if __name__ == "__main__":
     main()
