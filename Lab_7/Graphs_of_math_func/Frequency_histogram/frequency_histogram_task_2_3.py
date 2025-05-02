@@ -36,8 +36,7 @@ def letter_frequency():
     selected_path = derectory_reader() # вибір файлу
     
     with open(selected_path, "r", encoding="utf-8") as file:
-        text = file.read()
-        
+        text = file.read() 
         if not text.strip():
             print("Файл порожній!")
             letter_frequency() # повторний виклик функції
@@ -56,7 +55,6 @@ def letter_frequency():
         
     return top10_letters # повернення 10 найбільш частих літер
 
-
 def sentence_frequency():
     """Функція для обчислення частоти появи окличних, питальних, 
     звичайних та речень з трикрапкою у тексті"""
@@ -65,26 +63,24 @@ def sentence_frequency():
     
     with open(selected_path, "r", encoding="utf-8") as file:
         text = file.read()
-        
         if not text.strip():
-            print("Попередження Файл порожній")
-            return []
-    
-        text = text.lower() # перетворення тексту в нижній регістр
+            print("Файл порожній!")
+            sentence_frequency() # повторний виклик функції
         
-        sentence_list = {} # створення словника для зберігання частоти появи речень
-        for char in text:
-            if char == "...":
-                sentence_list["..."] = sentence_list.get("...", 0) + 1 # додавання речення до словника
-            elif char == "?":
-                sentence_list["?"] = sentence_list.get("?", 0) + 1 # додавання речення до словника
-            elif char == "!":
-                sentence_list["!"] = sentence_list.get("!", 0) + 1 # додавання речення до словника
-            elif char == ".":
-                sentence_list["."] = sentence_list.get(".", 0) + 1 # додавання речення до словника
-
-    top_list_sentence = sorted(sentence_list.items(), key=lambda x: x[1], reverse=True)[:10] # сортування речень за частотою появи
-    return top_list_sentence
+        constructs = { 
+            ".": ".",
+            "!": "!",
+            "?": "?",
+            "...": "..."
+        }
+        
+        freq_dict = {}
+        for name, substring in constructs.items():
+            freq_dict[name] = text.count(substring) # підрахунок частоти появи речень
+            
+        sorted_freq_dict = dict(sorted(freq_dict.items(), key=lambda x: x[1], reverse=True)) # сортування частоти речень
+    
+    return sorted_freq_dict # повернення частоти речень      
 
 def plot_letter_frequency():
     """Функція для побудови гістограми частоти появи літер у тексті"""
@@ -117,7 +113,12 @@ def plot_sentence_frequency():
     """Функція для побудови гістограми частоти появи речень у тексті"""
     
     sentence_freq = sentence_frequency() # отримання частоти появи речень
-    sentences, frequencies = zip(*sentence_freq) # розділення на речення та частоти
+    if not sentence_freq or not any(sentence_freq.values()): # перевірка на наявність даних
+        print("Немає даних для побудови гістограми речень")      
+        return
+          
+    sentences = list(sentence_freq.keys())
+    frequencies = list(sentence_freq.values())
     
     plt.figure(figsize=(10, 6))
     bars = plt.bar(sentences, frequencies, color='red', edgecolor='black', linewidth=1.5)
@@ -142,9 +143,34 @@ def plot_sentence_frequency():
 
 def main():
     """Основна функція для виклику інших функцій"""
-    plot_letter_frequency() # виклик функції для побудови гістограми частоти появи літер
-    plot_sentence_frequency() # виклик функції для побудови гістограми частоти появи речень
-   
+    
+    print("Програма для побудови гістограм частоти появи літер та речень у тексті")
+    
+    menu = {
+        1: "Гістограма частоти появи літер",
+        2: "Гістограма частоти появи речень",
+        3: "Вихід"
+    }
+    
+    while True:
+        print("\nОберіть дію:")
+        for key, value in menu.items():
+            print(f"{key}. {value}")
+        
+        try:
+            choice = int(input("Ваш вибір: "))
+            if choice == 1:
+                plot_letter_frequency() # виклик функції для побудови гістограми частоти появи літер
+            elif choice == 2:
+                plot_sentence_frequency() # виклик функції для побудови гістограми частоти появи речень
+            elif choice == 3:
+                print("Вихід з програми")
+                break
+            else:
+                print("Неправильний вибір. Спробуйте ще раз.")
+        except ValueError:
+            print("Введіть правильне число")    
+    
 if __name__ == "__main__":
     main() # виклик основної функції
            
