@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-import numpy as np
 import os
 
 def derectory_reader(): # Використовуємо функцію для читання дерикторії з лаб 3
@@ -75,7 +74,7 @@ def sentence_frequency():
         }
         
         freq_dict = {}
-        for name, substring in constructs.items():
+        for name, substring in constructs.items(): 
             freq_dict[name] = text.count(substring) # підрахунок частоти появи речень
             
         sorted_freq_dict = dict(sorted(freq_dict.items(), key=lambda x: x[1], reverse=True)) # сортування частоти речень
