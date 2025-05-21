@@ -48,9 +48,7 @@ def collback(call):
     if call.data != 'else':
         vallue = call.data.split('/')
         result = currency.convert(amount, vallue[0], vallue[1])
-        bot.send_message(call.message.chat.id, f"✅ {amount} {vallue[0]} = {round(result, 2)} {vallue[1]},\n"
-                        "Можете заново ввести суму")
-        bot.register_next_step_handler(call.message, summa)
+        bot.send_message(call.message.chat.id, f"✅ {amount} {vallue[0]} = {round(result, 2)} {vallue[1]},\n")
     else:
         bot.send_message(call.message.chat.id, 'Введіть іншу пару валют через слеш, наприклад USD/EUR')
         bot.register_next_step_handler(call.message, mycurrency)
@@ -61,8 +59,7 @@ def mycurrency(message):
     try:
         result = currency.convert(amount, value[0], value[1])
         bot.send_message(message.chat.id, f"✅ {amount} {value[0]} = {round(result, 2)} {value[1]},\n"
-                        "Можете заново ввести суму")
-        bot.register_next_step_handler(message, summa)
+                        "Перегляньте курс валют /exchange, або конвертуйте іншу пару валют /convert")  
     except Exception as e:
         bot.send_message(message.chat.id, '❗ Введіть коректну пару валют через слеш, наприклад USD/EUR')
         bot.register_next_step_handler(message, mycurrency)
@@ -81,7 +78,8 @@ def exchange(message):
                 except Exception:
                     continue  # якщо для якоїсь валюти немає курсу, пропускаємо
         rates_text = '\n'.join(all_rates)
-        bot.send_message(message.chat.id, f'📈 Курс USD до всіх підтримуваних валют:\n{rates_text}')
+        bot.send_message(message.chat.id, f'📈 Курс USD до всіх підтримуваних валют:\n{rates_text}'
+                        '\nКонвертувати валюту /convert')
     except Exception as e:
         bot.send_message(message.chat.id, '❌ Не вдалося отримати курс валют. Спробуйте пізніше.')
        
